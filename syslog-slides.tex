@@ -1,0 +1,91 @@
+% Copyright (c) 2017 Alexander Bluhm <bluhm@openbsd.org>
+%
+% Permission to use, copy, modify, and distribute this software for any
+% purpose with or without fee is hereby granted, provided that the above
+% copyright notice and this permission notice appear in all copies.
+%
+% THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+% WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+% MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+% ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+% WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+% ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+% OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+\documentclass[14pt]{beamer}
+\usetheme{Frankfurt}
+\usepackage{tikz}
+\author{Alexander Bluhm}
+\title{Never Loose a Syslog Message}
+\institute{\url{bluhm@openbsd.org}}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Agenda}
+\tableofcontents
+\end{frame}
+
+\section{Motivation}
+
+\begin{frame}{Why reliable logging?}
+\begin{itemize}
+    \item system analysis
+    \item attacker prevents log
+    \item required by common criteria
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What can go wrong?}
+\begin{itemize}
+    \item UDP for remote logs
+    \item UNIX datagram for local logs
+    \item file descriptors
+    \item chroot(2)
+    \item timestamps and time zones
+\end{itemize}
+\end{frame}
+
+\section{Starting Position}
+
+\begin{frame}{Message Flow}
+\begin{tikzpicture}
+\draw
+    ++(0,-2) node[anchor=south west]{\textbf{program}} -- +(11,0)
+    +(2,1) node[anchor=west]{\texttt{syslog(LOG\_ERR, "message \%d", 7)}}
+    ++(0,-2) node[anchor=south west]{\textbf{libc}} -- +(11,0)
+    +(2,1) node[anchor=west]{priority, timestamp, sprintf, send}
+    ++(0,-2) node[anchor=south west]{\textbf{kernel}} -- +(11,0)
+    +(2,1) node[anchor=west]{\texttt{sendto("/dev/log")}}
+    ++(0,-2) node[anchor=south west]{\textbf{syslogd}} -- +(11,0)
+    +(2,1) node[anchor=west]{recv, write log file, send UDP};
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Priority, Facility, Level, Severity, Options}
+\end{frame}
+
+\begin{frame}{Timestamp}
+\end{frame}
+
+\begin{frame}{dmesg}
+\end{frame}
+
+\begin{frame}{Certificates}
+\end{frame}
+
+\begin{frame}{Tests}
+\end{frame}
+
+\begin{frame}{TODO}
+\begin{itemize}
+    \item File system full recovery
+    \item Memory buffer overflow
+\end{itemize}
+\end{frame}
+
+\end{document}

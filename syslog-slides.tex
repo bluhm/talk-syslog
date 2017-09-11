@@ -55,14 +55,14 @@
 \begin{frame}{Message Flow}
 \begin{tikzpicture}
 \draw
-    ++(0,-2) node[anchor=south west]{\textbf{program}} -- +(11,0)
-    +(2,1) node[anchor=west]{\texttt{syslog(LOG\_ERR, "message \%d", 7)}}
-    ++(0,-2) node[anchor=south west]{\textbf{libc}} -- +(11,0)
-    +(2,1) node[anchor=west]{priority, timestamp, sprintf, send}
-    ++(0,-2) node[anchor=south west]{\textbf{kernel}} -- +(11,0)
-    +(2,1) node[anchor=west]{\texttt{sendto("/dev/log")}}
-    ++(0,-2) node[anchor=south west]{\textbf{syslogd}} -- +(11,0)
-    +(2,1) node[anchor=west]{recv, write log file, send UDP};
+    ++(0,-2) node[anchor=north west]{\textbf{program}} -- +(11,0)
+    +(2,-1) node[anchor=west]{\texttt{syslog(LOG\_ERR, "message \%d", 7)}}
+    ++(0,-2) node[anchor=north west]{\textbf{libc}} -- +(11,0)
+    +(2,-1) node[anchor=west]{priority, timestamp, sprintf, send}
+    ++(0,-2) node[anchor=north west]{\textbf{kernel}} -- +(11,0)
+    +(2,-1) node[anchor=west]{\texttt{sendto("/dev/log")}}
+    ++(0,-2) node[anchor=north west]{\textbf{syslogd}} -- +(11,0)
+    +(2,-1) node[anchor=west]{recv, write log file, send UDP};
 \end{tikzpicture}
 \end{frame}
 

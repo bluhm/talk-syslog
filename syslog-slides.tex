@@ -78,7 +78,7 @@
     \texttt{<94>Sep 24 09:45:00 ftpd[4711]:\ bluhm logged in}
 \end{frame}
 
-\section{Improvements}
+\section{Local Improvements}
 
 \begin{frame}{/dev/log}
 Problems with \texttt{/dev/log} UNIX socket
@@ -101,7 +101,7 @@ Problems with \texttt{/dev/log} UNIX socket
 
     \vspace{.5cm}
     \texttt{sendsyslog("<94>Sep 24 09:37:42 ftpd[4711]:\ 
-	bluhm logged in", 57, LOG\_CONS)}
+	bluhm logged in", 47, LOG\_CONS)}
 \end{frame}
 
 \begin{frame}{Using sendsyslog}
@@ -183,8 +183,11 @@ Problems with \texttt{/dev/log} UNIX socket
     \item messages may overwrite
     \item special kernel message at gap
 \end{itemize}
+    \vspace{.5cm}
     \texttt{<4>klog:\ dropped 1243 bytes, message buffer full}
 \end{frame}
+
+\section{Remote Logging}
 
 \begin{frame}{Certificates}
 \end{frame}
@@ -197,6 +200,14 @@ Problems with \texttt{/dev/log} UNIX socket
     \item File system full recovery
     \item Memory buffer overflow
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Questions}
+\begin{center}
+\begin{tikzpicture}
+\draw [font=\fontsize{6cm}{4cm}\selectfont] node {?};
+\end{tikzpicture}
+\end{center}
 \end{frame}
 
 \end{document}

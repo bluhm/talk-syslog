@@ -35,7 +35,7 @@
 \begin{frame}{Why reliable logging?}
 \begin{itemize}
     \item system analysis
-    \item attacker prevents log
+    \item attacker tries to prevent log
     \item required by common criteria
 \end{itemize}
 \end{frame}
@@ -67,6 +67,28 @@
 \end{frame}
 
 \begin{frame}{Priority, Facility, Level, Severity, Options}
+    \texttt{openlog("ftpd", LOG\_PID|LOG\_CONS, LOG\_FTP)}\\
+    \texttt{syslog(LOG\_INFO, "\%s logged in", user)}
+
+    \vspace{.5cm}
+    \texttt{\#define LOG\_FTP  (11<<3) /* ftp daemon */}\\
+    \texttt{\#define LOG\_INFO 6       /* informational */ }
+
+    \vspace{.5cm}
+    \texttt{<94>Sep 24 09:45:00 localhost ftpd[4711]: bluhm logged in}
+\end{frame}
+
+\section{Problems and Solutions}
+
+\begin{frame}{/dev/log}
+Problems with \texttt{/dev/log}
+\begin{itemize}
+    \item needs file descriptor
+    \item use \texttt{LOG\_NDELAY}
+    \item reconnect after \texttt{SIGHUP} syslogd
+    \item needs UNIX socket in chroot
+    \item needs \texttt{pledge("unix")}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Timestamp}

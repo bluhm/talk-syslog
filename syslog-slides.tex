@@ -15,7 +15,6 @@
 \documentclass[14pt]{beamer}
 \usetheme{Frankfurt}
 \usepackage{tikz}
-\usepackage{bold-extra}
 \author{Alexander Bluhm}
 \title{Never Loose a Syslog Message}
 \institute{\url{bluhm@openbsd.org}}
@@ -123,8 +122,8 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{frame}
 
 \begin{frame}{Error Handling}
-    \texttt{\textbf{void}} \\
-    \texttt{syslog(int prio, const char *msg, ...)}
+    \texttt{void \\
+	syslog(int prio, const char *msg, ...)}
 \begin{itemize}
     \item libc cannot return error
     \item program cannot log error
@@ -167,9 +166,24 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{frame}
 
 \begin{frame}{Logging without Libc}
+    System call sendsyslog allows logging
+\begin{itemize}
+    \item from signal handler
+    \item at memcpy overlap
+    \item from stack protector handler
+    \item from ld.so dynamic linker
+\end{itemize}
 \end{frame}
 
-\begin{frame}{dmesg}
+\begin{frame}{dmesg Overflow}
+    Detect dmesg overflow in log file
+\begin{itemize}
+    \item ring buffer with kernel logs
+    \item syslogd reads from \texttt{/dev/klog}
+    \item messages may overwrite
+    \item special kernel message at gap
+\end{itemize}
+    \texttt{<4>klog:\ dropped 1243 bytes, message buffer full}
 \end{frame}
 
 \begin{frame}{Certificates}

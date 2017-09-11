@@ -76,7 +76,7 @@
     \texttt{\#define LOG\_INFO 6       /* informational */ }
 
     \vspace{.5cm}
-    \texttt{<94>Sep 24 09:45:00 localhost ftpd[4711]:\ bluhm logged in}
+    \texttt{<94>Sep 24 09:45:00 ftpd[4711]:\ bluhm logged in}
 \end{frame}
 
 \section{Improvements}
@@ -101,11 +101,11 @@ Problems with \texttt{/dev/log} UNIX socket
     sendsyslog(const void *msg, size\_t len, int flags)}
 
     \vspace{.5cm}
-    \texttt{sendsyslog("<94>Sep 24 09:45:00 localhost ftpd[4711]:\ 
+    \texttt{sendsyslog("<94>Sep 24 09:37:42 ftpd[4711]:\ 
 	bluhm logged in", 57, LOG\_CONS)}
 \end{frame}
 
-\begin{frame}{using sendsyslog}
+\begin{frame}{Using sendsyslog}
     Syslogd does
 \begin{itemize}
     \item create socketpair
@@ -117,6 +117,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \begin{itemize}
     \item send to syslogd's socketpair
     \item write to console if necessary
+    \item ktrace if activated
     \item count errors
 \end{itemize}
 \end{frame}
@@ -128,15 +129,41 @@ Problems with \texttt{/dev/log} UNIX socket
     \item libc cannot return error
     \item program cannot log error
 \end{itemize}
+    \vspace{.5cm}
     Kernel sendsyslog can do it
 \begin{itemize}
-    \item count failed send to syslogd
+    \item count failures when sending to syslogd
     \item write message to syslog when it works again
 \end{itemize}
+    \vspace{.5cm}
     \texttt{sendsyslog:\ dropped 2 messages, error 57}
 \end{frame}
 
-\begin{frame}{Timestamp}
+\begin{frame}{Libc Timestamp}
+    Timestamp from syslog(3)
+\begin{itemize}
+    \item needs \texttt{/etc/localtime} in every chroot
+    \item no year
+    \item no time zone
+    \item no indication of daylight saving time
+    \item insufficient precision
+    \item does not work for kernel messages
+\end{itemize}
+    \vspace{.5cm}
+    \texttt{Sep 24 09:37:42}
+\end{frame}
+
+\begin{frame}{Syslogd Timestamp}
+    Timestamp added by syslogd
+\begin{itemize}
+    \item timestamp is optional in received message
+    \item syslogd adds it if missing
+    \item libc does not generate it
+    \item syslogd -Z generates ISO format in UTC
+    \item use millisecond precision
+\end{itemize}
+    \vspace{.5cm}
+    \texttt{2017-09-24T09:39:23.321Z}
 \end{frame}
 
 \begin{frame}{Logging without Libc}

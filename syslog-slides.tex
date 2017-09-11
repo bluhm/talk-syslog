@@ -45,7 +45,7 @@
     \item UDP for remote logs
     \item UNIX datagram for local logs
     \item file descriptors
-    \item chroot(2)
+    \item chroot environment
     \item timestamps and time zones
 \end{itemize}
 \end{frame}
@@ -75,19 +75,48 @@
     \texttt{\#define LOG\_INFO 6       /* informational */ }
 
     \vspace{.5cm}
-    \texttt{<94>Sep 24 09:45:00 localhost ftpd[4711]: bluhm logged in}
+    \texttt{<94>Sep 24 09:45:00 localhost ftpd[4711]:\ bluhm logged in}
 \end{frame}
 
 \section{Problems and Solutions}
 
 \begin{frame}{/dev/log}
-Problems with \texttt{/dev/log}
+Problems with \texttt{/dev/log} UNIX socket
 \begin{itemize}
     \item needs file descriptor
     \item use \texttt{LOG\_NDELAY}
     \item reconnect after \texttt{SIGHUP} syslogd
     \item needs UNIX socket in chroot
     \item needs \texttt{pledge("unix")}
+    \item LOG\_CONS is even worse
+\end{itemize}
+\end{frame}
+
+\begin{frame}{sendsyslog}
+
+New system call sendsyslog(2)
+
+\vspace{.5cm}
+\texttt{int \\
+sendsyslog(const void *msg, size\_t len, int flags)}
+
+\vspace{.5cm}
+\texttt{sendsyslog("<94>Sep 24 09:45:00 localhost ftpd[4711]:\ bluhm logged in", 57, LOG\_CONS)}
+\end{frame}
+
+\begin{frame}{using sendsyslog}
+Syslogd does
+\begin{itemize}
+    \item create socketpair
+    \item register one end with \texttt{ioctl(LIOCSFD)}
+    \item receive form other end
+\end{itemize}
+\vspace{.5cm}
+Kernel does
+\begin{itemize}
+    \item send to syslogd's socketpair
+    \item write to console if necessary
+    \item count errors
 \end{itemize}
 \end{frame}
 

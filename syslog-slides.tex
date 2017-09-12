@@ -28,13 +28,13 @@
 \end{frame}
 
 \begin{frame}{Agenda}
+\setcounter{tocdepth}{1}
 \tableofcontents
 \end{frame}
 
 \section{Motivation}
 
-\subsection{Why}
-
+\subsection{Why reliable logging?}
 \begin{frame}{Why reliable logging?}
 \begin{itemize}
     \item system analysis
@@ -43,8 +43,7 @@
 \end{itemize}
 \end{frame}
 
-\subsection{What}
-
+\subsection{What can go wrong?}
 \begin{frame}{What can go wrong?}
 \begin{itemize}
     \item UDP for remote logs
@@ -57,8 +56,7 @@
 
 \section{Starting Position}
 
-\subsection{Flow}
-
+\subsection{Message Flow}
 \begin{frame}{Message Flow}
 \begin{tikzpicture}
 \draw
@@ -73,8 +71,7 @@
 \end{tikzpicture}
 \end{frame}
 
-\subsection{Call}
-
+\subsection{Priority, Facility, Level, Severity, Options}
 \begin{frame}{Priority, Facility, Level, Severity, Options}
     \texttt{openlog("ftpd", LOG\_PID|LOG\_CONS, LOG\_FTP)}\\
     \texttt{syslog(LOG\_INFO, "\%s logged in", user)}
@@ -89,8 +86,7 @@
 
 \section{Local Improvements}
 
-\subsection{socket}
-
+\subsection{/dev/log}
 \begin{frame}{/dev/log}
 Problems with \texttt{/dev/log} UNIX socket
 \begin{itemize}
@@ -104,7 +100,6 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{frame}
 
 \subsection{sendsyslog}
-
 \begin{frame}{sendsyslog}
     New system call sendsyslog(2)
 
@@ -117,8 +112,7 @@ Problems with \texttt{/dev/log} UNIX socket
 	bluhm logged in", 47, LOG\_CONS)}
 \end{frame}
 
-\subsection{using}
-
+\subsection{Using sendsyslog}
 \begin{frame}{Using sendsyslog}
     Syslogd does
 \begin{itemize}
@@ -136,8 +130,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{itemize}
 \end{frame}
 
-\subsection{error}
-
+\subsection{Error Handling}
 \begin{frame}{Error Handling}
     \texttt{void \\
 	syslog(int prio, const char *msg, ...)}
@@ -155,8 +148,7 @@ Problems with \texttt{/dev/log} UNIX socket
     \texttt{sendsyslog:\ dropped 2 messages, error 57}
 \end{frame}
 
-\subsection{timestamp}
-
+\subsection{Libc Timestamp}
 \begin{frame}{Libc Timestamp}
     Timestamp from syslog(3)
 \begin{itemize}
@@ -171,8 +163,7 @@ Problems with \texttt{/dev/log} UNIX socket
     \texttt{Sep 24 09:37:42}
 \end{frame}
 
-\subsection{zulu}
-
+\subsection{Syslogd Timestamp}
 \begin{frame}{Syslogd Timestamp}
     Timestamp added by syslogd
 \begin{itemize}
@@ -186,8 +177,7 @@ Problems with \texttt{/dev/log} UNIX socket
     \texttt{2017-09-24T09:39:23.321Z}
 \end{frame}
 
-\subsection{direct}
-
+\subsection{Logging without Libc}
 \begin{frame}{Logging without Libc}
     System call sendsyslog allows logging
 \begin{itemize}
@@ -198,8 +188,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{itemize}
 \end{frame}
 
-\subsection{dmesg}
-
+\subsection{dmesg Overflow}
 \begin{frame}{dmesg Overflow}
     Detect dmesg overflow in log file
 \begin{itemize}
@@ -215,7 +204,6 @@ Problems with \texttt{/dev/log} UNIX socket
 \section{Remote Logging}
 
 \subsection{Possibilities}
-
 \begin{frame}{Possibilities}
 \begin{tikzpicture}
 \node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
@@ -256,7 +244,8 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Methods}
+\subsection{Local Methods}
+\begin{frame}{Local Methods}
 \begin{tikzpicture}
 \node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
 \node [draw]              (process)  at

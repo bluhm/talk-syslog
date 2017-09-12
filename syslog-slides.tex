@@ -230,18 +230,18 @@ Problems with \texttt{/dev/log} UNIX socket
 \node [draw]              (wall)     at
     (xyz polar cs:angle=52,x radius=5,y radius=3) {wall};
 \node [draw]              (console)  at
-    (xyz polar cs:angle=30,x radius=5,y radius=3) {console};
-\node [draw]              (pipe)     at
-    (xyz polar cs:angle=-30,x radius=5,y radius=3) {memory};
+    (xyz polar cs:angle=28,x radius=5,y radius=3) {console};
+\node [draw,align=center] (pipe)     at
+    (xyz polar cs:angle=-35,x radius=5,y radius=3) {memory\\ buffer};
 \node [draw]              (file)     at
-    (xyz polar cs:angle=-57,x radius=5,y radius=3) {pipe};
+    (xyz polar cs:angle=-64,x radius=5,y radius=3) {pipe};
 \node [draw]              (memory)   at
-    (xyz polar cs:angle=-75,x radius=5,y radius=3) {file};
+    (xyz polar cs:angle=-80,x radius=5,y radius=3) {file};
 
 \node [draw]              (process)  at
-    (xyz polar cs:angle=135,x radius=5,y radius=3) {process};
+    (xyz polar cs:angle=120,x radius=5,y radius=3) {process};
 \node [draw]              (kernel)   at
-    (xyz polar cs:angle=225,x radius=5,y radius=3) {kernel};
+    (xyz polar cs:angle=240,x radius=5,y radius=3) {kernel};
 \draw [->] (node cs:name=sender) -- (node cs:name=syslogd);
 \draw [->] (node cs:name=process) -- (node cs:name=syslogd);
 \draw [->] (node cs:name=kernel) -- (node cs:name=syslogd);
@@ -253,6 +253,25 @@ Problems with \texttt{/dev/log} UNIX socket
 \draw [->] (node cs:name=syslogd) -- (node cs:name=memory);
 \draw [->] (node cs:name=syslogd) -- (node cs:name=pipe);
 \draw [->] (node cs:name=syslogd) -- (node cs:name=file);
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Methods}
+\begin{tikzpicture}
+\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw]              (process)  at
+    (xyz polar cs:angle=120,x radius=5,y radius=3) {process};
+\node [draw]              (kernel)   at
+    (xyz polar cs:angle=240,x radius=5,y radius=3) {kernel};
+
+\draw [->] (node cs:name=process) --
+    node[near start,anchor=west] {sendsyslog}
+    node[anchor=west]            {/dev/log}
+    node[near end,anchor=west]   {UNIX socket}
+    (node cs:name=syslogd);
+\draw [->] (node cs:name=kernel) --
+    node[anchor=west] {/dev/klog}
+    (node cs:name=syslogd);
 \end{tikzpicture}
 \end{frame}
 

@@ -15,6 +15,7 @@
 \documentclass[14pt]{beamer}
 \usetheme{Frankfurt}
 \usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
 \author{Alexander Bluhm}
 \title{Never Loose a Syslog Message}
 \institute{\url{bluhm@openbsd.org}}
@@ -32,6 +33,8 @@
 
 \section{Motivation}
 
+\subsection{Why}
+
 \begin{frame}{Why reliable logging?}
 \begin{itemize}
     \item system analysis
@@ -39,6 +42,8 @@
     \item required by common criteria
 \end{itemize}
 \end{frame}
+
+\subsection{What}
 
 \begin{frame}{What can go wrong?}
 \begin{itemize}
@@ -51,6 +56,8 @@
 \end{frame}
 
 \section{Starting Position}
+
+\subsection{Flow}
 
 \begin{frame}{Message Flow}
 \begin{tikzpicture}
@@ -66,6 +73,8 @@
 \end{tikzpicture}
 \end{frame}
 
+\subsection{Call}
+
 \begin{frame}{Priority, Facility, Level, Severity, Options}
     \texttt{openlog("ftpd", LOG\_PID|LOG\_CONS, LOG\_FTP)}\\
     \texttt{syslog(LOG\_INFO, "\%s logged in", user)}
@@ -80,6 +89,8 @@
 
 \section{Local Improvements}
 
+\subsection{socket}
+
 \begin{frame}{/dev/log}
 Problems with \texttt{/dev/log} UNIX socket
 \begin{itemize}
@@ -92,6 +103,8 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{itemize}
 \end{frame}
 
+\subsection{sendsyslog}
+
 \begin{frame}{sendsyslog}
     New system call sendsyslog(2)
 
@@ -103,6 +116,8 @@ Problems with \texttt{/dev/log} UNIX socket
     \texttt{sendsyslog("<94>Sep 24 09:37:42 ftpd[4711]:\ 
 	bluhm logged in", 47, LOG\_CONS)}
 \end{frame}
+
+\subsection{using}
 
 \begin{frame}{Using sendsyslog}
     Syslogd does
@@ -121,6 +136,8 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{itemize}
 \end{frame}
 
+\subsection{error}
+
 \begin{frame}{Error Handling}
     \texttt{void \\
 	syslog(int prio, const char *msg, ...)}
@@ -138,6 +155,8 @@ Problems with \texttt{/dev/log} UNIX socket
     \texttt{sendsyslog:\ dropped 2 messages, error 57}
 \end{frame}
 
+\subsection{timestamp}
+
 \begin{frame}{Libc Timestamp}
     Timestamp from syslog(3)
 \begin{itemize}
@@ -152,6 +171,8 @@ Problems with \texttt{/dev/log} UNIX socket
     \texttt{Sep 24 09:37:42}
 \end{frame}
 
+\subsection{zulu}
+
 \begin{frame}{Syslogd Timestamp}
     Timestamp added by syslogd
 \begin{itemize}
@@ -165,6 +186,8 @@ Problems with \texttt{/dev/log} UNIX socket
     \texttt{2017-09-24T09:39:23.321Z}
 \end{frame}
 
+\subsection{direct}
+
 \begin{frame}{Logging without Libc}
     System call sendsyslog allows logging
 \begin{itemize}
@@ -174,6 +197,8 @@ Problems with \texttt{/dev/log} UNIX socket
     \item from ld.so dynamic linker
 \end{itemize}
 \end{frame}
+
+\subsection{dmesg}
 
 \begin{frame}{dmesg Overflow}
     Detect dmesg overflow in log file
@@ -188,6 +213,48 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{frame}
 
 \section{Remote Logging}
+
+\subsection{Possibilities}
+
+\begin{frame}{Possibilities}
+\begin{tikzpicture}
+\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+
+\node [draw,align=center] (sender)   at (-4, 0) {sender\\ loghost};
+\node [draw,align=center] (receiver) at ( 5, 0) {receiver\\ loghost};
+
+\node [draw]              (tty)      at
+    (xyz polar cs:angle=85,x radius=5,y radius=3) {tty};
+\node [draw]              (user)     at
+    (xyz polar cs:angle=70,x radius=5,y radius=3) {user};
+\node [draw]              (wall)     at
+    (xyz polar cs:angle=52,x radius=5,y radius=3) {wall};
+\node [draw]              (console)  at
+    (xyz polar cs:angle=30,x radius=5,y radius=3) {console};
+\node [draw]              (pipe)     at
+    (xyz polar cs:angle=-30,x radius=5,y radius=3) {memory};
+\node [draw]              (file)     at
+    (xyz polar cs:angle=-57,x radius=5,y radius=3) {pipe};
+\node [draw]              (memory)   at
+    (xyz polar cs:angle=-75,x radius=5,y radius=3) {file};
+
+\node [draw]              (process)  at
+    (xyz polar cs:angle=135,x radius=5,y radius=3) {process};
+\node [draw]              (kernel)   at
+    (xyz polar cs:angle=225,x radius=5,y radius=3) {kernel};
+\draw [->] (node cs:name=sender) -- (node cs:name=syslogd);
+\draw [->] (node cs:name=process) -- (node cs:name=syslogd);
+\draw [->] (node cs:name=kernel) -- (node cs:name=syslogd);
+\draw [->] (node cs:name=syslogd) -- (node cs:name=receiver);
+\draw [->] (node cs:name=syslogd) -- (node cs:name=tty);
+\draw [->] (node cs:name=syslogd) -- (node cs:name=user);
+\draw [->] (node cs:name=syslogd) -- (node cs:name=wall);
+\draw [->] (node cs:name=syslogd) -- (node cs:name=console);
+\draw [->] (node cs:name=syslogd) -- (node cs:name=memory);
+\draw [->] (node cs:name=syslogd) -- (node cs:name=pipe);
+\draw [->] (node cs:name=syslogd) -- (node cs:name=file);
+\end{tikzpicture}
+\end{frame}
 
 \begin{frame}{Certificates}
 \end{frame}

@@ -27,12 +27,12 @@
 \titlepage
 \end{frame}
 
+\section{Motivation}
+
 \begin{frame}{Agenda}
 \setcounter{tocdepth}{1}
 \tableofcontents
 \end{frame}
-
-\section{Motivation}
 
 \subsection{Why reliable logging?}
 \begin{frame}{Why reliable logging?}
@@ -56,18 +56,18 @@
 
 \section{Starting Position}
 
-\subsection{Message Flow}
-\begin{frame}{Message Flow}
+\subsection{Traditional Message Flow}
+\begin{frame}{Traditional Message Flow}
 \begin{tikzpicture}
 \draw
-    ++(0,-2) node[anchor=north west]{\textbf{program}} -- +(11,0)
+    ++(0,-2) node[anchor=north west]{\textbf{program}} -- +(10.5,0)
     +(2,-1) node[anchor=west]{\texttt{syslog(LOG\_ERR, "message \%d", 7)}}
-    ++(0,-2) node[anchor=north west]{\textbf{libc}} -- +(11,0)
+    ++(0,-2) node[anchor=north west]{\textbf{libc}}    -- +(10.5,0)
     +(2,-1) node[anchor=west]{priority, timestamp, sprintf, send}
-    ++(0,-2) node[anchor=north west]{\textbf{kernel}} -- +(11,0)
-    +(2,-1) node[anchor=west]{\texttt{sendto("/dev/log")}}
-    ++(0,-2) node[anchor=north west]{\textbf{syslogd}} -- +(11,0)
-    +(2,-1) node[anchor=west]{recv, write log file, send UDP};
+    ++(0,-2) node[anchor=north west]{\textbf{kernel}}  -- +(10.5,0)
+    +(2,-1) node[anchor=west]{\texttt{/dev/log}}
+    ++(0,-2) node[anchor=north west]{\textbf{syslogd}} -- +(10.5,0)
+    +(2,-1) node[anchor=west]{recv, log file, send UDP};
 \end{tikzpicture}
 \end{frame}
 
@@ -81,7 +81,7 @@
     \texttt{\#define LOG\_INFO 6       /* informational */ }
 
     \vspace{.5cm}
-    \texttt{<94>Sep 24 09:45:00 ftpd[4711]:\ bluhm logged in}
+    \texttt{<94>Sep 24 09:35:00 ftpd[4711]:\ bluhm logged in}
 \end{frame}
 
 \section{Local Improvements}
@@ -108,7 +108,7 @@ Problems with \texttt{/dev/log} UNIX socket
     sendsyslog(const void *msg, size\_t len, int flags)}
 
     \vspace{.5cm}
-    \texttt{sendsyslog("<94>Sep 24 09:37:42 ftpd[4711]:\ 
+    \texttt{sendsyslog("<94>Sep 24 09:36:23 ftpd[4711]:\ 
 	bluhm logged in", 47, LOG\_CONS)}
 \end{frame}
 
@@ -174,7 +174,7 @@ Problems with \texttt{/dev/log} UNIX socket
     \item use millisecond precision
 \end{itemize}
     \vspace{.5cm}
-    \texttt{2017-09-24T09:39:23.321Z}
+    \texttt{2017-09-24T07:38:59.333}
 \end{frame}
 
 \subsection{Logging without Libc}
@@ -208,7 +208,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \begin{tikzpicture}
 \node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
 
-\node [draw,align=center] (sender)   at (-4, 0) {sender\\ loghost};
+\node [draw,align=center] (sender)   at (-3.5, 0) {sender\\ loghost};
 \node [draw,align=center] (receiver) at ( 5, 0) {receiver\\ loghost};
 
 \node [draw]              (tty)      at
@@ -264,7 +264,43 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{tikzpicture}
 \end{frame}
 
+\subsection{Remote Methods}
+\begin{frame}{Remote Methods}
+\begin{tikzpicture}
+\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw,align=center] (sender)   at (-4.5, 0) {sender\\ loghost};
+\node [draw,align=center] (receiver) at ( 4.5, 0) {receiver\\ loghost};
+
+\draw [->] (node cs:name=sender) --
+    node[align=center,anchor=south] {UDP\\ TCP\\ TLS}
+    node[align=center,anchor=north] {IPv4\\ IPv6}
+    (node cs:name=syslogd);
+\draw [->] (node cs:name=syslogd) --
+    node[align=center,anchor=south] {UDP\\ TCP\\ TLS}
+    node[align=center,anchor=north] {IPv4\\ IPv6}
+    (node cs:name=receiver);
+\end{tikzpicture}
+\end{frame}
+
 \begin{frame}{Certificates}
+\end{frame}
+
+\section{Conclusion}
+
+\subsection{OpenBSD Message Flow}
+\begin{frame}{OpenBSD Message Flow}
+\begin{tikzpicture}
+\draw
+    ++(0,-2) node[anchor=north west]{\textbf{program}} -- +(10.5,0)
+    +(2,-1) node[anchor=west]{\texttt{syslog(LOG\_ERR, "message \%d", 7)}}
+    ++(0,-2) node[anchor=north west]{\textbf{libc}}    -- +(10.5,0)
+    +(2,-1) node[anchor=west]{priority, sprintf, \textit{syscall}}
+    ++(0,-2) node[anchor=north west]{\textbf{kernel}}  -- +(10.5,0)
+    +(2,-1) node[anchor=west]{\textit{sendsyslog}, \textit{error handling}}
+    ++(0,-2) node[anchor=north west]{\textbf{syslogd}} -- +(10.5,0)
+    +(2,-1) node[anchor=west]{recv, \textit{timestamp}, log file,
+	send \textit{TLS}};
+\end{tikzpicture}
 \end{frame}
 
 \begin{frame}{Tests}
@@ -272,7 +308,7 @@ Problems with \texttt{/dev/log} UNIX socket
 
 \begin{frame}{TODO}
 \begin{itemize}
-    \item File system full recovery
+    \item File system full
     \item Memory buffer overflow
 \end{itemize}
 \end{frame}
@@ -280,7 +316,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \begin{frame}{Questions}
 \begin{center}
 \begin{tikzpicture}
-\draw [font=\fontsize{6cm}{4cm}\selectfont] node {?};
+\draw [font=\Huge] node {?};
 \end{tikzpicture}
 \end{center}
 \end{frame}

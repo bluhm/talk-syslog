@@ -255,11 +255,11 @@ Problems with \texttt{/dev/log} UNIX socket
 
 \draw [->] (node cs:name=process) --
     node[near start,anchor=west] {sendsyslog}
-    node[anchor=west]            {/dev/log}
+    node[anchor=west]            {\texttt{/dev/log}}
     node[near end,anchor=west]   {UNIX socket}
     (node cs:name=syslogd);
 \draw [->] (node cs:name=kernel) --
-    node[anchor=west] {/dev/klog}
+    node[anchor=west] {\texttt{/dev/klog}}
     (node cs:name=syslogd);
 \end{tikzpicture}
 \end{frame}
@@ -280,6 +280,15 @@ Problems with \texttt{/dev/log} UNIX socket
     node[align=center,anchor=north] {IPv4\\ IPv6}
     (node cs:name=receiver);
 \end{tikzpicture}
+\end{frame}
+
+\subsection{UDP Format}
+\begin{frame}{UDP Format}
+\begin{itemize}
+    \item single UDP packet
+    \item max 1180 bytes
+\end{itemize}
+    \texttt{<94>Sep 24 10:07:13 80.154.94.47 ftpd[4711]:\ bluhm logged in}
 \end{frame}
 
 \begin{frame}{Certificates}

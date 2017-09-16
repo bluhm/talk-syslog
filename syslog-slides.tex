@@ -291,6 +291,26 @@ Problems with \texttt{/dev/log} UNIX socket
     \texttt{<94>Sep 24 10:07:13 80.154.94.47 ftpd[4711]:\ bluhm logged in}
 \end{frame}
 
+\subsection{TCP Format}
+\begin{frame}{TCP Format}
+\begin{itemize}
+    \item new line delimiter
+    \item or NUL delimiter
+    \item or octet counting
+\end{itemize}
+    \texttt{60 <94>Sep 24 10:08:52 80.154.94.47 ftpd[4711]:\ bluhm logged in}
+\end{frame}
+
+\subsection{TLS Format}
+\begin{frame}{TLS Format}
+\begin{itemize}
+    \item octet counting
+    \item must support 2048 bytes
+    \item should support 8192 bytes
+\end{itemize}
+\end{frame}
+
+\subsection{Certificates}
 \begin{frame}{Certificates}
 \end{frame}
 

@@ -19,7 +19,7 @@
 \author{Alexander Bluhm}
 \title{Never Loose a Syslog Message}
 \institute{\url{bluhm@openbsd.org}}
-\date{\today}
+\date{September 24, 2017}
 
 \begin{document}
 
@@ -407,17 +407,6 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{itemize}
 \end{frame}
 
-\subsection{Always Run}
-\begin{frame}{Always Run}
-\begin{itemize}
-    \item no fatal errors
-    \item safe signal handlers
-    \item libevent
-    \item privsep with re-exec
-    \item file descriptor exhaustion
-\end{itemize}
-\end{frame}
-
 \section{Conclusion}
 
 \subsection{OpenBSD Message Flow}
@@ -436,11 +425,16 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{tikzpicture}
 \end{frame}
 
-\subsection{Tests}
-\begin{frame}{Tests}
+\subsection{Run and Log Reliably}
+\begin{frame}{Run and Log Reliably}
 \begin{itemize}
-    \item 180 regression tests
-    \item for almost everything
+    \item no fatal errors
+    \item count dropped messages
+    \item safe signal handlers
+    \item libevent
+    \item file descriptor exhaustion
+    \item privsep with re-exec
+    \item pledge child and parent
 \end{itemize}
 \end{frame}
 
@@ -451,6 +445,14 @@ Problems with \texttt{/dev/log} UNIX socket
     \item log memory buffer overflow
     \item initialization errors to file
     \item move format from RFC 3164 to 5424
+\end{itemize}
+\end{frame}
+
+\subsection{Tests}
+\begin{frame}{Tests}
+\begin{itemize}
+    \item 180 regression tests
+    \item for almost everything
 \end{itemize}
 \end{frame}
 

@@ -268,8 +268,8 @@ Problems with \texttt{/dev/log} UNIX socket
 \begin{frame}{Remote Methods}
 \begin{tikzpicture}
 \node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
-\node [draw,align=center] (sender)   at (-4.5, 0) {sender\\ loghost};
-\node [draw,align=center] (receiver) at ( 4.5, 0) {receiver\\ loghost};
+\node [draw,align=center] (sender)   at (-4.25, 0) {sender\\ loghost};
+\node [draw,align=center] (receiver) at ( 4.25, 0) {receiver\\ loghost};
 
 \draw [->] (node cs:name=sender) --
     node[align=center,anchor=south] {UDP\\ TCP\\ TLS}
@@ -308,17 +308,53 @@ Problems with \texttt{/dev/log} UNIX socket
     \item octet counting
     \item must support 2048 bytes
     \item should support 8192 bytes
+    \item libevent and libtls
 \end{itemize}
 \end{frame}
 
-\subsection{Certificates}
-\begin{frame}{Certificates}
+\subsection{Provide Server Certificate}
+\begin{frame}{Provide Server Certificate}
+\begin{tikzpicture}
+\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw,align=center] (sender)   at (-8.5, 0) {sender\\ loghost};
+
+\draw [->] (node cs:name=sender) --
+    node[near end,align=center,anchor=north]
+	{/etc/ssl/host.crt\\ /etc/ssl/private/host.key}
+    (node cs:name=syslogd);
+\end{tikzpicture}
+\begin{itemize}
+    \item syslogd must provide server certificate
+    \item sender can identify syslogd
+    \item attacker cannot see messages
+\end{itemize}
+\end{frame}
+
+\subsection{Validate Client Certificate}
+\begin{frame}{Validate Client Certificate}
+\begin{tikzpicture}
+\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw,align=center] (sender)   at (-8.5, 0) {sender\\ loghost};
+
+\draw [->] (node cs:name=sender) --
+    node[very near start,align=center,anchor=north]
+	{client\\ certificate}
+    node[very near end,align=center,anchor=north]
+	{-K CAfile}
+    (node cs:name=syslogd);
+\end{tikzpicture}
+\begin{itemize}
+    \item sender may provide client certificate
+    \item syslogd can identify sender
+    \item attacker cannot inject messages
+\end{itemize}
 \end{frame}
 
 \subsection{TCP/TLS Errors}
 \begin{frame}{TCP/TLS Errors}
 \begin{itemize}
-    \item log connection loss
+    \item debug incoming connections
+    \item log connection errors
     \item count dropped messages
     \item suppress ``last message repeated''
 \end{itemize}
@@ -330,7 +366,8 @@ Problems with \texttt{/dev/log} UNIX socket
     \item no fatal errors
     \item safe signal handlers
     \item libevent
-    \item privsep with reexec
+    \item privsep with re-exec
+    \item file descriptor exhaustion
 \end{itemize}
 \end{frame}
 
@@ -365,7 +402,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \begin{itemize}
     \item continue after file system full
     \item log memory buffer overflow
-    \item intialization errors to file
+    \item initialization errors to file
     \item move format from RFC 3164 to 5424
 \end{itemize}
 \end{frame}

@@ -108,7 +108,7 @@ Problems with \texttt{/dev/log} UNIX socket
     sendsyslog(const void *msg, size\_t len, int flags)}
 
     \vspace{.5cm}
-    \texttt{sendsyslog("<94>Sep 24 09:36:23 ftpd[4711]:\ 
+    \texttt{sendsyslog("<94>Sep 24 09:36:23 ftpd[4711]:\
 	bluhm logged in", 47, LOG\_CONS)}
 \end{frame}
 
@@ -206,10 +206,9 @@ Problems with \texttt{/dev/log} UNIX socket
 \subsection{Possibilities}
 \begin{frame}{Possibilities}
 \begin{tikzpicture}
-\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
-
+\node [draw,ellipse]      (syslogd)  at (   0, 0) {syslogd};
 \node [draw,align=center] (sender)   at (-3.5, 0) {sender\\ loghost};
-\node [draw,align=center] (receiver) at ( 5, 0) {receiver\\ loghost};
+\node [draw,align=center] (receiver) at (   5, 0) {receiver\\ loghost};
 
 \node [draw]              (tty)      at
     (xyz polar cs:angle=85,x radius=5,y radius=3) {tty};
@@ -267,7 +266,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \subsection{Remote Methods}
 \begin{frame}{Remote Methods}
 \begin{tikzpicture}
-\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw,ellipse]      (syslogd)  at (    0, 0) {syslogd};
 \node [draw,align=center] (sender)   at (-4.25, 0) {sender\\ loghost};
 \node [draw,align=center] (receiver) at ( 4.25, 0) {receiver\\ loghost};
 
@@ -315,10 +314,12 @@ Problems with \texttt{/dev/log} UNIX socket
 \subsection{Provide Server Certificate}
 \begin{frame}{Provide Server Certificate}
 \begin{tikzpicture}
-\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw,ellipse]      (syslogd)  at (   0, 0) {syslogd};
 \node [draw,align=center] (sender)   at (-8.5, 0) {sender\\ loghost};
 
 \draw [->] (node cs:name=sender) --
+    node[near end,align=center,anchor=south]
+	{-T host:port}
     node[near end,align=center,anchor=north]
 	{/etc/ssl/host.crt\\ /etc/ssl/private/host.key}
     (node cs:name=syslogd);
@@ -333,19 +334,65 @@ Problems with \texttt{/dev/log} UNIX socket
 \subsection{Validate Client Certificate}
 \begin{frame}{Validate Client Certificate}
 \begin{tikzpicture}
-\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw,ellipse]      (syslogd)  at (   0, 0) {syslogd};
 \node [draw,align=center] (sender)   at (-8.5, 0) {sender\\ loghost};
 
 \draw [->] (node cs:name=sender) --
+    node[near end,align=center,anchor=south]
+	{-T host:port}
     node[very near start,align=center,anchor=north]
 	{client\\ certificate}
-    node[very near end,align=center,anchor=north]
+    node[near end,align=center,anchor=north]
 	{-K CAfile}
     (node cs:name=syslogd);
 \end{tikzpicture}
 \begin{itemize}
     \item sender may provide client certificate
     \item syslogd can identify sender
+    \item attacker cannot inject messages
+\end{itemize}
+\end{frame}
+
+\subsection{Validate Server Certificate}
+\begin{frame}{Validate Server Certificate}
+\begin{tikzpicture}
+\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw,align=center] (receiver) at (8.5, 0) {receiver\\ loghost};
+
+\draw [->] (node cs:name=syslogd) --
+    node[near start,align=center,anchor=south]
+	{@tls://host:port}
+    node[near start,align=center,anchor=north]
+	{-C CAfile\\ /etc/ssl/cert.pem}
+    node[very near end,align=center,anchor=north]
+	{server\\ certificate}
+    (node cs:name=receiver);
+\end{tikzpicture}
+\begin{itemize}
+    \item syslogd must know server CA
+    \item host must be in server certificate
+    \item syslogd can identify receiver
+    \item attacker cannot see messages
+    \item turn off with -V
+\end{itemize}
+\end{frame}
+
+\subsection{Provide Client Certificate}
+\begin{frame}{Provide Client Certificate}
+\begin{tikzpicture}
+\node [draw,ellipse]      (syslogd)  at ( 0, 0) {syslogd};
+\node [draw,align=center] (receiver) at (8.5, 0) {receiver\\ loghost};
+
+\draw [->] (node cs:name=syslogd) --
+    node[near start,align=center,anchor=south]
+	{@tls://host:port}
+    node[near start,align=center,anchor=north]
+	{-c cert\_file\\ -k key\_file}
+    (node cs:name=receiver);
+\end{tikzpicture}
+\begin{itemize}
+    \item syslogd may provide client certificate
+    \item sender can identify syslogd
     \item attacker cannot inject messages
 \end{itemize}
 \end{frame}

@@ -294,6 +294,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \subsection{TCP Format}
 \begin{frame}{TCP Format}
 \begin{itemize}
+    \item no propper RFC 6587
     \item new line delimiter
     \item or NUL delimiter
     \item or octet counting
@@ -314,6 +315,25 @@ Problems with \texttt{/dev/log} UNIX socket
 \begin{frame}{Certificates}
 \end{frame}
 
+\subsection{TCP/TLS Errors}
+\begin{frame}{TCP/TLS Errors}
+\begin{itemize}
+    \item log connection loss
+    \item count dropped messages
+    \item suppress ``last message repeated''
+\end{itemize}
+\end{frame}
+
+\subsection{Always Run}
+\begin{frame}{Always Run}
+\begin{itemize}
+    \item no fatal errors
+    \item safe signal handlers
+    \item libevent
+    \item privsep with reexec
+\end{itemize}
+\end{frame}
+
 \section{Conclusion}
 
 \subsection{OpenBSD Message Flow}
@@ -332,13 +352,21 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{tikzpicture}
 \end{frame}
 
+\subsection{Tests}
 \begin{frame}{Tests}
+\begin{itemize}
+    \item 180 regression tests
+    \item for almost everything
+\end{itemize}
 \end{frame}
 
+\subsection{TODO}
 \begin{frame}{TODO}
 \begin{itemize}
-    \item File system full
-    \item Memory buffer overflow
+    \item continue after file system full
+    \item log memory buffer overflow
+    \item intialization errors to file
+    \item move format from RFC 3164 to 5424
 \end{itemize}
 \end{frame}
 

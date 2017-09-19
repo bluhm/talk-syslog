@@ -17,7 +17,7 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric}
 \author{Alexander Bluhm}
-\title{Never Loose a Syslog Message}
+\title{Never Lose a Syslog Message}
 \institute{\url{bluhm@openbsd.org}}
 \date{September 24, 2017}
 
@@ -182,7 +182,7 @@ Problems with \texttt{/dev/log} UNIX socket
     \item use millisecond precision
 \end{itemize}
     \vspace{.5cm}
-    \texttt{2017-09-24T07:38:59.333}
+    \texttt{2017-09-24T07:38:59.333Z}
 \end{frame}
 
 \subsection{Logging without Libc}
@@ -305,7 +305,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \subsection{TCP Format}
 \begin{frame}{TCP Format}
 \begin{itemize}
-    \item no propper RFC 6587
+    \item no proper RFC 6587
     \item new line delimiter
     \item or NUL delimiter
     \item or octet counting
@@ -382,7 +382,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{tikzpicture}
 \begin{itemize}
     \item syslogd must know server CA
-    \item host must be in server certificate
+    \item hostname must be in server certificate
     \item syslogd can identify receiver
     \item attacker cannot see messages
     \item turn off with -V
@@ -404,7 +404,7 @@ Problems with \texttt{/dev/log} UNIX socket
 \end{tikzpicture}
 \begin{itemize}
     \item syslogd may provide client certificate
-    \item sender can identify syslogd
+    \item receiver can identify syslogd
     \item attacker cannot inject messages
 \end{itemize}
 \end{frame}
@@ -417,6 +417,7 @@ Problems with \texttt{/dev/log} UNIX socket
     \item count dropped messages
     \item suppress ``last message repeated''
 \end{itemize}
+    \texttt{syslogd[17361]:\ dropped 2 messages to remote loghost}
 \end{frame}
 
 \section{Conclusion}
